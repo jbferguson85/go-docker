@@ -1,26 +1,53 @@
 package main
 
 import (
-	"encoding/json"
-	"fmt"
+	"io"
 	"log"
 	"net/http"
+	"os"
+
+	"github.com/labstack/echo/v4"
 )
 
-type Message struct {
-	Text string `json:"text"`
+func main() {
+	e := echo.New()
+	e.POST("/api/upload", uploadFile)
+	e.GET("/api/health", healthCheck)
+	e.Logger.Fatal(e.Start(":8080"))
 }
 
-func main() {
-	port := 8080
+func healthCheck(c echo.Context) error {
+	log.Println("Health check OK")
+	c.Response().Header().Add("Access-Control-Allow-Origin", "*")
+	return c.String(http.StatusOK, "OK")
+}
 
-	http.HandleFunc("/api/message", func(w http.ResponseWriter, r *http.Request) {
-		w.Header().Set("Content-Type", "application/json")
-		w.Header().Set("Access-Control-Allow-Origin", "*")
-		message := Message{Text: "Hello, World!"}
-		json.NewEncoder(w).Encode(message)
-	})
+func uploadFile(c echo.Context) error {
+	c.Response().Header().Add("Access-Control-Allow-Origin", "*")
 
-	fmt.Println("Listening on port:", port)
-	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%d", port), nil))
+	// Read file
+	file, err := c.FormFile("file")
+	if err != nil {
+		return err
+	}
+	src, err := file.Open()
+	if err != nil {
+		return err
+	}
+	defer src.Close()
+
+	// Destination
+	dst, err := os.Create(file.Filename)
+	if err != nil {
+		return err
+	}
+	defer dst.Close()
+
+	// Copy
+	if _, err = io.Copy(dst, src); err != nil {
+		return err
+	}
+	log.Printf("Received file!: %v", file.Filename)
+
+	return err
 }
