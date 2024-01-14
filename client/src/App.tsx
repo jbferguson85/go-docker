@@ -1,22 +1,18 @@
-import { useState, useEffect } from "react";
-import axios from "axios";
+import React from "react";
+import CsvUpload from "./components/csv-upload/csv-upload";
 
-function App() {
-  const [message, setMessage] = useState("");
-  const instance = axios.create({ baseURL: "http://localhost:8080" });
+const handleFileUpload = (file: File) => {
+  // Do something with the uploaded file
+  console.log(file);
+};
 
-  useEffect(() => {
-    instance
-      .get("/api/message")
-      .then((response) => setMessage(response.data.text))
-      .catch((error) => console.error(error));
-  }, []);
-
+const App: React.FC = () => {
   return (
     <div>
-      <h1>{message}</h1>
+      <h1>File Picker Example</h1>
+      <CsvUpload onFileUpload={handleFileUpload} />
     </div>
   );
-}
+};
 
 export default App;
