@@ -1,8 +1,13 @@
 # Build the Go app
-FROM golang:1.17.2-alpine AS go-build
+FROM golang:1.21-alpine AS go-build
 WORKDIR /app
-COPY . .
+COPY go.mod ./
+COPY go.sum ./
+RUN go mod download
+
+COPY *.go ./
 RUN go build -o main .
+
 
 # Run the app
 FROM alpine:latest
