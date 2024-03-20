@@ -1,0 +1,19 @@
+TO DO
+
+- Validation on CSV file
+  - Depends on db, mock API
+- Mock API to send parsed CSV lines to
+  - Should "accept" CSV lines as commands
+  - Should be able to validate existence of some value, i.e. ItemType 
+- Database container
+  - Will hold values for validation (a la "master data")
+- Schema for db container
+- Inter-container communication
+- Environment variables
+- Landing page in front end
+- CSS in front end
+- JSON schema for CSV lines
+- Error handling for bad CSVs
+  - Way to download/view log of errors from upload
+  - Way to handle missing/misspelled values from CSV
+  - Way to handle errors from (mock or real) API 
